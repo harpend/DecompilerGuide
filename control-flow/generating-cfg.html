@@ -28,25 +28,28 @@
                 </div>
                 <hr>
                 <div class="row">
-                    <p>Control flow reconstruction - finding structures such as if-then-else or loops.</p>
-                    <p>Data flow reconstruction - finding types, variable/function names and converting register use to variable use.</p>
-                    <p>Obfuscation - the art of modifying code/data to make it difficult to decompile i.e. a pain in the arse.</p>
+                    <p>Leader - first instruction in a BB.</p>
+                    <p>Terminator - last instruction in a BB.</p>
                 </div>
             </div>
             <div class="col">
         
-                <h2>What is a Decompiler?</h2>
+                <h2>Generating Control Flow Graphs</h2>
                 <hr>
-                <p>The goal of a decompiler is to take executables and extract the code that generated them. This code is not available to us unless we go through the process of decompilation. Here are 2 examples:</p>
-                <h3>C example</h3>
-                <!-- add 0's and 1's on the left, C code on the right-->
-                <h3>Java example</h3>
-                <!-- add bytecode on the right, Java on the left-->
-                <p>The reason I have chosen these 2 examples is because they are the 2 most common languages decompilers are written for, and they also represent 2 paradigms. Java compiles to bytecode, whereas C compiles to a binary file. This affects our process of decompilation since bytecode contains a lot of information not available in binary. Examples of things available in bytecode not available in binary include: Function names, parameter/return types, and segmentation of code/data.</p>
-                <p>Not having these features can significantly increase the complexity of a decompiler which is why it is considered easier to write a bytecode (Java) decompiler over one that decompiles from binary. There are however, some challenges universal to decompilers such as control flow reconstruction, data flow reconstruction and also obfuscation.</p>
-                <p>To take on these challenges, we use a series of phases that keep refining the program and generating information to help us transform it into the original program. These phases are covered in the next article...</p>
+                <p>In this article I will introduce the steps required in order to build a control flow graph.</p>
+                <p>As a reminder from the architecture document Control Flow Graphs (CFGs) are a way to represent the possible paths of execution a program could take, here is what a simple if-then-else would look like:</p>
+                <img src="./images/cfg1.png" width="400" alt="if-then-else control flow graph">
+                <p></p>
+                <p>The squares represent our nodes containing the code and the arrows represent edges from one set of sequentially executed instructions to another. It should also be noted that a control flow graph has a root. The root is the entry point to the program and when we represent the graph in our decompiler we shall store a pointer to this.</p>
+                <p>Here is the data structures for a node (Basic Block) and the graph:</p>
+                <img src="./images/cfg-types.png" width="400" alt="Basic Block and CFG Structures">
+                <p></p>
+                <p>We use lists for the successors and the predecessors due the proportion of edges being small compared to the number of nodes squared. The instruction type is left up to the reader to define based on what is most appropriate for their assembly/bytecode. The options for this are discussed in the disassembly section.</p>
+                <p>The next step is to go through the program and generate our CFG. We start with one basic block and identify the Basic Blocks then we create them and link them. Changes in control flow are indicated by branches, calls, returns and in more complicated programs we have function pointers.</p>
+                <p>Here is some psuedocode for that:</p>
+                <img src="./images/genbbs.png" width="500" alt="psuedocode for generating CFG">
+                <p></p>
                 
-            </div>
         </div>
     </div>
   </body>
